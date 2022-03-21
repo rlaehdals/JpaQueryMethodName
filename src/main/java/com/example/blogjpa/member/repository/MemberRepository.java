@@ -1,0 +1,45 @@
+package com.example.blogjpa.member.repository;
+
+import com.example.blogjpa.member.domain.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface MemberRepository extends JpaRepository<Member,Long> {
+
+    Optional<Member> findByName(String name);
+
+    Optional<Member> findByNameAndAge(String name, int age);
+
+    //Optional<Member> findByNameAndAge(int age, String name); 오류 발생
+
+    List<Member> findTop3By();
+
+    List<Member> findFirst3By();
+
+    List<Member> findByOrderByNameDesc();
+
+    List<Member> findFirst3ByOrderByNameDesc();
+
+    List<Member> findDistinctByAge(int age);
+
+    Optional<Member> findByNameIgnoreCase(String n);
+
+    List<Member> findByAgeAfter(int age);
+
+    List<Member> findByAgeGreaterThan(int age);
+
+    List<Member> findByAgeBetween(int from, int to);
+
+    List<Member> findByAgeIn(List<Integer> list);
+
+    List<Member> findByAgeNotNull();
+
+    List<Member> findByNameLike(String name);
+
+    List<Member> findByNameEndingWith(String name);
+
+    List<Member> findByNameContains(String name);
+}
