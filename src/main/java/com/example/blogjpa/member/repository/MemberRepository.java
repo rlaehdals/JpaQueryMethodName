@@ -2,6 +2,8 @@ package com.example.blogjpa.member.repository;
 
 import com.example.blogjpa.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -42,4 +44,31 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     List<Member> findByNameEndingWith(String name);
 
     List<Member> findByNameContains(String name);
+
+    void deleteByNameLike(String s);
+
+    @Query("select m from Member m")
+    List<Member> findMemberBy();
+
+    @Query("select m from Member m where m.name = ?1 and m.age = ?2")
+    Optional<Member> findMemberToSequenceByNameAndAge(String name, int age);
+
+    @Query("select m from Member m where m.name = :name and m.age = :age")
+    Optional<Member> findMemberToTargetNotDesignateByNameAndAge(String name, int age);
+
+    @Query("select m from Member m where m.name = :name and m.age = :age")
+    Optional<Member> findMemberToTargetDesignateByNameAndAge(@Param("name") String n, @Param("age") int a);
+
+    @Query("update Member m set m.age=m.age+1 where m.age>:age")
+    int bulkNotModifyingByAgeGreaterThanPlus(int age);
+
+    @Modifying
+    @Query("update Member m set m.age=m.age+1 where m.age>:age")
+    int bulkModifyingNotAttributeByAgeGreaterThanPlus(int age);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update Member m set m.age=m.age+1 where m.age>:age")
+    int bulkModifyingAttributeByAgeGreaterThanPlus(int age);
+
+
 }

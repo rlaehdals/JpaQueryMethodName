@@ -3,10 +3,12 @@ package com.example.blogjpa.jpa;
 import com.example.blogjpa.member.domain.Member;
 import com.example.blogjpa.member.repository.MemberRepository;
 import com.example.blogjpa.member.repository.TeamRepository;
+import org.hibernate.hql.internal.QueryExecutionRequestException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 public class JPAQueryTest {
@@ -352,6 +355,115 @@ public class JPAQueryTest {
         }
 
         assertThat(memberList.size()).isEqualTo(4);
+
+    }
+
+    @Test
+    @DisplayName("기존 메서드인 deleteById 사용해보기")
+    void deleteById(){
+        List<Member> members = createMember();
+
+        for(Member member: members){
+            memberRepository.save(member);
+        }
+
+        memberRepository.deleteById(1l);
+
+        List<Member> memberList = memberRepository.findAll();
+        for(Member member: memberList){
+            System.out.println(member);
+        }
+
+        assertThat(memberList.size()).isEqualTo(3);
+
+    }
+
+    @Test
+    @DisplayName("연산자를 이용해서 삭제")
+    void deleteByOperator(){
+        List<Member> members = createMember();
+
+        for(Member member: members){
+            memberRepository.save(member);
+        }
+
+        memberRepository.deleteByNameLike("%1");
+
+        List<Member> memberList = memberRepository.findAll();
+
+        for(Member member: memberList){
+            System.out.println(member);
+        }
+
+        assertThat(memberList.size()).isEqualTo(3);
+
+    }
+    @Test
+    @DisplayName("@Query 사용 basic")
+    void selectAll(){
+        List<Member> members = createMember();
+
+        for(Member member: members){
+            memberRepository.save(member);
+        }
+
+        List<Member> memberList = memberRepository.findMemberBy();
+
+        for(Member member: memberList){
+            System.out.println(member);
+        }
+
+        assertThat(memberList.size()).isEqualTo(4);
+    }
+
+    @Test
+    @DisplayName("update 사용 @Modifying 없을 때 오류 발생")
+    void updateNotModifying(){
+        List<Member> members = createMember();
+
+        for(Member member: members){
+            memberRepository.save(member);
+        }
+
+        assertThatThrownBy(() -> memberRepository.bulkNotModifyingByAgeGreaterThanPlus(11))
+                .isInstanceOf(InvalidDataAccessApiUsageException.class);
+    }
+
+    @Test
+    @DisplayName("update 사용 @Modifying 있을 때 속성 x")
+    void updateModifyingButNotAttribute(){
+        List<Member> members = createMember();
+
+        for(Member member: members){
+            memberRepository.save(member);
+        }
+
+        List<Member> all = memberRepository.findAll();
+
+        int i = memberRepository.bulkModifyingNotAttributeByAgeGreaterThanPlus(11);
+
+        Member result = memberRepository.findByName("m1").get();
+
+        assertThat(result.getAge()).isEqualTo(12);
+
+    }
+
+    @Test
+    @DisplayName("update 사용 @Modifying 있을 때 속성 o")
+    void updateModifyingAndAttribute(){
+        List<Member> members = createMember();
+
+        for(Member member: members){
+            memberRepository.save(member);
+        }
+
+        List<Member> all = memberRepository.findAll();
+
+        int i = memberRepository.bulkModifyingAttributeByAgeGreaterThanPlus(11);
+
+        Member result = memberRepository.findByName("m1").get();
+
+        assertThat(result.getAge()).isEqualTo(13);
 
     }
 
