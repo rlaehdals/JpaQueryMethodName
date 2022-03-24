@@ -6,4 +6,4 @@
 
 @Query와 Update query에 대한 내용은 [@Query와 Update](https://dingdingmin-back-end-developer.tistory.com/entry/Spring-data-Jpa-4-Update%EC%99%80-Query)에 설명되어 있습니다. 참고해주세요.
 
-
+페치 조인에 대한 내용은 [Fetch join](https://dingdingmin-back-end-developer.tistory.com/entry/SpringBoot-Data-Jpa-5-Fetch-Join)에 설명되어 있습니다. 참고해주세요.
