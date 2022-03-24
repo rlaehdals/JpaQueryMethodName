@@ -1,6 +1,7 @@
 package com.example.blogjpa.member.repository;
 
 import com.example.blogjpa.member.domain.Member;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -70,5 +71,13 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     @Query("update Member m set m.age=m.age+1 where m.age>:age")
     int bulkModifyingAttributeByAgeGreaterThanPlus(int age);
 
+
+    Optional<Member> findNotFetchJoinByName(String name);
+
+    @Query("select m from Member m join fetch m.team where m.name=:name")
+    Optional<Member> findFetchJoinByName(String name);
+
+    @EntityGraph(attributePaths = "team")
+    Optional<Member> findEntityGraphFetchJoinByName(String name);
 
 }

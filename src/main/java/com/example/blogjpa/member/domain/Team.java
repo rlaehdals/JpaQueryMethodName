@@ -31,6 +31,9 @@ public class Team {
     public Team(String name, Member member){
         this.name=name;
         member.addTeam(this);
-        this.members.add(member);
+    }
+
+    public void addMember(Member member){
+        member.addTeam(this);
     }
 }

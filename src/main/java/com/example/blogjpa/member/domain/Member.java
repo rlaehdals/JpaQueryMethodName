@@ -32,12 +32,6 @@ public class Member {
     @JoinColumn(name = "team_id")
     private Team team;
 
-    @Override
-    public boolean equals(Object obj) {
-        Member me = (Member) obj;
-        return this.name.equals(me.name) && this.age==me.age;
-    }
-
     public void changeAge(int age){
         this.age=age;
     }
